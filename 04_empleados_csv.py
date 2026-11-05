@@ -18,3 +18,14 @@ with open("empleados.csv","r") as f:
 """
 #solicita la introudcción de un departamento y te muestra
 #los nombres de las personas de ese deprtamento
+dep=input("Introduce departamento")
+with open("empleados.csv","r") as f:
+    datos=csv.DictReader(f)
+    for emp in datos:
+        if emp["departamento"]==dep:
+            print(emp["empleado"])
+#nombre del empleado con mayor salario
+with open("empleados.csv","r") as f:
+    lista_empleados=list(csv.DictReader(f))
+    empleado_max=max(lista_empleados,key=lambda e:e["salario"])
+    print(f"El empleado {empleado_max["empleado"]} gana {empleado_max["salario"]}")
