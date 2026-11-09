@@ -18,5 +18,5 @@ if continente:
         col_pais.write(pais["name"])
         col_continente.write(pais["region"])
         col_poblacion.write(pais["population"])
-        col_bandera.image(pais["flags"]["png"],width=50)
+        col_bandera.image(pais["flags"]["png"],width=50,alt="no disponible")
  
