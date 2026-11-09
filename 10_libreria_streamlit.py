@@ -45,6 +45,7 @@ with tab_precios:
     precio_max=st.text_input("Introduce precio máximo")
     if st.button("Buscar",key="boton2"):
         st.table(list(filter(lambda lb:lb["precio"]<=float(precio_max),libros)))
+
 with tab_tienda:
     col_tienda,col_direccion,col_imagen=st.columns(3)
     col_tienda.write("**Nombre tienda**")
