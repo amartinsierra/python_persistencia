@@ -29,13 +29,15 @@ with tab_alumnos_cursos:
                 st.rerun()
 with tab_buscar_alumno:
     dni=st.text_input("Introduce el DNI: ")
-    if st.button("Buscar alumno"):
+    if st.button("Buscar alumno") or dni:
         alumno=opbd.buscar_alumno(dni)
         if alumno==None:
             st.toast("El dni no existe!!")
         else:
-            st.write(f"Nombre :**{alumno["nombre"]}**")
-            st.write(f"Email :**{alumno["email"]}**")
-            st.write(f"Curso :**{alumno["curso"]}**")
-            st.write(f"Nota :**{alumno["nota"]}**")
-
+            nombre=st.text_input("Nombre :",value=alumno["nombre"])
+            email=st.text_input("Email :",value=alumno["email"])
+            curso=st.text_input("Curso :",value=alumno["curso"])
+            nota=st.text_input("Nota :",value=alumno["nota"])
+            if st.button("Actualizar"):
+                opbd.actualizar(dni,nombre,email,curso,nota)
+                

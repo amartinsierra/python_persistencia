@@ -46,7 +46,7 @@ def cursos():
     db.close()
     return resultado    
 def actualizar(dni,nombre,email,curso,nota):
-    sql="update alumnos set nombre=%s, email=%s curso=%s, nota=%s where dni=%s"
+    sql="update alumnos set nombre=%s, email=%s, curso=%s, nota=%s where dni=%s"
     db=crear_conexion()
     cursor=db.cursor()
     cursor.execute(sql,(nombre,email,curso,nota,dni))
