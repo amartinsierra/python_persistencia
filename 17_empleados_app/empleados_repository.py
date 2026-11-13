@@ -1,4 +1,5 @@
 import pymongo as py
+from bson import ObjectId
 def crear_conexion():
     url="mongodb://localhost:27017"
     return py.MongoClient(url)
@@ -27,4 +28,19 @@ def empleados_por_salarios(min,max):
     empleados = list(col_empleados.find({"salario":{"$gte":min,"$lte":max}}))
     serv.close()
     return empleados
+
+def empleados():
+    #devuelve una lista con todos los empleados
+    serv=crear_conexion()
+    col_empleados = serv.empresa.empleados
+    empleados = list(col_empleados.find())
+    serv.close()
+    return empleados
+def actualizar_empleados(empleados): #[{"empleado":"aaaa","salario":2222,...},]
+    #recibe una lista con todos los empleados y los tiene que actualizar
+    serv=crear_conexion()
+    col_empleados = serv.empresa.empleados
+    for e in empleados:
+        col_empleados.update_one({"_id":ObjectId(e["_id"])},{"$set":{"empleado":e["empleado"],"salario":e["salario"],"edad":e["edad"],"departamento":e["departamento"]}})
+    serv.close()
 
