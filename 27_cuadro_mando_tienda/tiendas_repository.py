@@ -27,3 +27,6 @@ def media_facturacion(mes):
 
 def mayor_gasto_personal(mes):
     return df.filter(pl.col("mes") == mes).sort(by="gastos_personal", descending=True).row(0) 
+
+def facturacion_total_tiendas():
+    return df.group_by("nombre_tienda").agg(pl.col("facturacion").sum().alias("facturacion_total")).to_dicts()
