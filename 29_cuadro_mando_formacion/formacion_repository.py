@@ -72,9 +72,7 @@ def obtener_datos_filtrados(curso, asignatura, evaluacion, grupo):
 
 def obtener_indicadores(curso, asignatura, evaluacion, grupo):
 
-    datos = obtener_datos_filtrados(
-        curso, asignatura, evaluacion, grupo
-    )
+    datos = obtener_datos_filtrados(curso, asignatura, evaluacion, grupo)
 
     indicadores = datos.select(
         pl.col("id_alumno").unique().count().alias("alumnos"),
@@ -86,3 +84,51 @@ def obtener_indicadores(curso, asignatura, evaluacion, grupo):
         ).alias("porcentaje_aprobados")
     )
     return indicadores.row(0,named=True) ##devuelve los indicadores en un diccionario
+def obtener_estadisticas_asignaturas(curso, asignatura, evaluacion, grupo):
+    datos = obtener_datos_filtrados(curso, asignatura, evaluacion, grupo)
+    resultado = datos.group_by("asignatura").agg(
+        pl.col("id_alumno").unique().count().alias("alumnos_evaluados"),
+
+        pl.col("nota").mean().round(2).alias("nota_media"),
+
+        pl.col("nota").max().alias("nota_maxima"),
+
+        ((pl.col("nota") >= 5).mean() * 100).round(2).alias("porcentaje_aprobados")
+    )
+
+    return resultado.sort("nota_media",descending=True)
+
+def obtener_estadisticas_alumnos(curso, asignatura, evaluacion, grupo):
+    datos = obtener_datos_filtrados(curso, asignatura, evaluacion, grupo)
+    print(datos)
+    por_asignatura = datos.group_by(["id_alumno", "nombre", "curso", "grupo", "asignatura"]).agg(
+        pl.col("nota").mean().alias("media_asignatura")
+    )
+    resultado = por_asignatura.group_by(["id_alumno", "nombre", "curso", "grupo"]).agg(
+        pl.col("media_asignatura").mean().round(2).alias("nota_media"),
+
+        pl.col("media_asignatura").count().alias("asignaturas_evaluadas"),
+
+        ((pl.col("media_asignatura") >= 5).sum()).alias("asignaturas_aprobadas")
+    )
+
+    return resultado.sort(
+        "nota_media",
+        descending=True
+    )
+
+def obtener_evolucion_evaluaciones(curso, asignatura, grupo):
+    resultado = cargar_datos()
+
+    if curso != "Todos":
+        resultado = resultado.filter(pl.col("curso") == curso)
+
+    if asignatura != "Todas":
+        resultado = resultado.filter(pl.col("asignatura") == asignatura)
+
+    if grupo != "Todos":
+        resultado = resultado.filter(pl.col("grupo") == grupo)
+
+    return resultado.group_by("evaluacion").agg(
+            pl.col("nota").mean().round(2).alias("nota_media")
+        ).sort("evaluacion")
